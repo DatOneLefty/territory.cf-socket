@@ -29,6 +29,45 @@
 
 </body>
 <script>
+
+var c = document.getElementById('game'),
+canvas = c.getContext('2d');
+c.width = window.innerWidth;
+c.height = window.innerHeight;
+canvas.beginPath();
+canvas.rect(0, 0, window.innerWidth, window.innerHeight);
+canvas.fillStyle = "#1e1e1e";
+canvas.fill();
+
+	width = window.innerWidth;
+	height = window.innerHeight;
+	console.log(width);
+	console.log(height);
+	document.getElementById("game").innerHTML = "";
+	blocksx = Math.round(width / 40 - 1);
+	blocksy = Math.round(height / 40);
+
+	var tw = 0;
+	var th = 0;
+
+			canvas.beginPath();
+			canvas.rect(0, 0, 40, 40);
+			canvas.fillStyle = "purple";
+			canvas.fill();
+
+	for (var i = 0; i < blocksy; i++) {
+		for (var b = 0; b <= blocksx; b++) {
+			canvas.beginPath();
+			canvas.rect(tw, th, tw + 40, th + 40);
+			canvas.fillStyle = "#1e1e1e";
+			canvas.fill();
+			tw = tw + 40;
+		}
+	}
+
+
+
+
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
@@ -56,11 +95,10 @@ function getCookie(cname) {
 
   var socket = io();
 
-if (getCookie("id") == "") {
-socket.emit("new-user", "help");
-} else {
-socket.emit('new-join', "whoami");
-}
+
+//socket.emit("new-user", "help");
+
+socket.emit("new-join", "1492128841238");
 var x, y, color;
     socket.on('info', function(msg){
 	var inf = msg.split(",");
