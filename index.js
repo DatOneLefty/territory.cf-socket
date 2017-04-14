@@ -13,21 +13,21 @@ app.get('/', function(req, res){
 
 app.use('/external/', express.static(__dirname + "/static/"));
 io.on('connection', function(socket){
-  
+
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(25500, function(){
+  console.log('listening on *:25500');
 });
-    
+
 
 io.on('connection', function(socket){
- 
+
   socket.on('disconnect', function(){
 
   });
 });
-    
+
 
 io.on('connection', function(socket){
   socket.on('move', function(msg){
@@ -42,33 +42,40 @@ io.on('connection', function(socket){
   socket.on('new-join', function(message) {
 	console.log("user join: " + message);
 
-
-	console.log("telling user " + message + ": " +  x + "," + y + "," + c);
-	this.emit("info", x + "," + y + "," + c);
-
 	var tdir = __dirname + "/data/" + message + "/";
 	var x,y,c;
-	fs.readFile(tdir + "x", 'utf8', function (err,data) {
-		x = data;
-		console.log(x);
-	});
-	fs.readFile(tdir + "y", 'utf8', function (err,data) {
-		y = data;
-	});
-	fs.readFile(tdir + "color", 'utf8', function (err,data) {
-		c = data;
-	});
+	x = file_get_cont(tdir + "x");
+	y = file_get_cont(tdir + "y");
+  c = file_get_cont(tdir + "color");
+
+
+  	console.log("telling user " + message + ": " +  x + "," + y + "," + c);
+  	this.emit("info", x + "," + y + "," + c);
+
 	});
 });
+
+
+function file_get_cont(name) {
+  var chunk, data;
+  var readStream = fs.createReadStream(name, 'utf8');
+
+readStream.on('data', function(chunk) {
+    data += chunk;
+}).on('end', function() {
+    return data;
+});
+}
 function getRandomInt(min, max) {
 	return Math.floor(Math.random() * (max-min + 1)) + min;
 }
+
 
 io.on('connection', function(socket){
   socket.on('new-user', function(message) {
 	var c = new Date();
 	var ms = c.getTime();
-	mkdirp(__dirname + "/data/" + ms, function(err) { 
+	mkdirp(__dirname + "/data/" + ms, function(err) {
 	});
 	var tdir = __dirname + "/data/" + ms + "/";
 	fs.writeFile(tdir + "color",'#'+(Math.random()*0xFFFFFF<<0).toString(16));
