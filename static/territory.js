@@ -63,11 +63,12 @@ function getCookie(cname) {
 
 
   var socket = io();
-
+var id = "";
 if (getCookie("id") == "") {
 socket.emit("new-user", "help");
 } else {
 socket.emit("new-join", getCookie("id"));
+id = getCookie("id");
 }
 var x, y, color;
     socket.on('info', function(msg){
@@ -83,5 +84,55 @@ var x, y, color;
 socket.on('new-info', function(msg){
 	setCookie("id", msg, 365 * 5);
 	socket.emit("new-join", getCookie("id"));
-
+	id = getCookie("id");
     });
+
+
+		socket.on('new-claim', function(msg){
+			
+		    });
+
+
+function update() {
+	socket.emit("move", x + "," + y + "," + id);
+}
+var open = true;
+		function move(d) {
+			if (open == true) {
+			if (d == 1) {
+				y++;
+				update();
+			}
+			if (d == 2) {
+				y--;
+				update();
+			}
+			if (d == 3) {
+				x--;
+				update();
+			}
+			if (d == 4) {
+				x++;
+				update();
+			}
+		}
+		}
+
+
+			function checkKey(e) {
+			e = e || window.event;
+			var code = e.keyCode;
+			if (code == 38) {
+				move(1); // up
+			}
+			if (code == 40) {
+				move(2); // down
+			}
+			if (code == 37) {
+				move(3); // left
+			}
+			if (code == 39) {
+				move(4); // right
+			}
+			}
+			document.onkeydown = checkKey;
