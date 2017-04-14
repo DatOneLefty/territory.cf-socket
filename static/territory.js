@@ -15,8 +15,6 @@ canvas.fill();
 
 	width = window.innerWidth;
 	height = window.innerHeight;
-	console.log(width);
-	console.log(height);
 	document.getElementById("game").innerHTML = "";
 	blocksx = Math.round(width / 40 - 1);
 	blocksy = Math.round(height / 40);
@@ -99,7 +97,6 @@ function draw(x2, y2, scol) {
 	var corner_y_r = Math.round(y - (blocksy / 2));
 	if (x2 >= corner_x && x2 <= corner_x_r) {
 		if (y2 <= corner_y && y2 >= corner_y_r) {
-			console.log("draw");
 			var gx = corner_x - x2;
 			var gy = corner_y - y2;
 			if (gx < 0) {
@@ -125,10 +122,11 @@ var m2 = msg[0] + "x" + msg[1];
 map_data = map_data.filter(function(item) {
 return (item[0] !== m2)
 })
-		map_data = map_data.concat([[m2,msg[3]]]);
+map_data = map_data.concat([[m2,msg[3]]]);
 draw(msg[0], msg[1], msg[3]);
+});
 
-		    });
+
 var map_data;
 socket.on('gmap', function(msg){
 map_data = msg;
@@ -144,7 +142,6 @@ function redraw() {
 	canvas.fill();
 
 	map.forEach(function(element) {
-		console.log(element);
 		piece = element[0].split("x");
 	    draw(piece[0], piece[1], element[1]);
 	});
