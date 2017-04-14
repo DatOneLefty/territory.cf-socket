@@ -92,40 +92,64 @@ socket.on('new-info', function(msg){
 	id = getCookie("id");
     });
 
-
-		socket.on('new-claim', function(msg){
-console.log(msg);
-
-msg = JSON.parse("[" + msg + "]");
-
-var corner_x = Math.round(x - (blocksx / 2));
-var corner_y = Math.round(parseInt(y) + (blocksy / 2));
-
-var corner_x_r = Math.round(parseInt(x) + (blocksx / 2));
-var corner_y_r = Math.round(y - (blocksy / 2));
-console.log(x);
-console.log(corner_x_r);
-if (msg[0] >= corner_x && msg[0] <= corner_x_r) {
-	if (msg[1] <= corner_y && msg[1] >= corner_y_r) {
-		var gx = corner_x + msg[0] * 40;
-		var gy = corner_y + msg[1] * 40;
-		// erm... this is broken, i just needed to commit
-		canvas.beginPath();
-		canvas.rect(gx, gy, gx + 40, gy + 40);
-		canvas.fillStyle = map[2];
-		canvas.fill();
-		console.log("written");
+function draw(x2, y2, scol) {
+	var corner_x = Math.round(x - (blocksx / 2));
+	var corner_y = Math.round(parseInt(y) + (blocksy / 2));
+	var corner_x_r = Math.round(parseInt(x) + (blocksx / 2));
+	var corner_y_r = Math.round(y - (blocksy / 2));
+	if (x2 >= corner_x && x2 <= corner_x_r) {
+		if (y2 <= corner_y && y2 >= corner_y_r) {
+			console.log("draw");
+			var gx = corner_x - x2;
+			var gy = corner_y - y2;
+			if (gx < 0) {
+	  		gx = -gx;
+			}
+			if (gy < 0) {
+			  gy = -gy;
+			}
+			gx = gx * 40;
+			gy = gy * 40;
+			canvas.beginPath();
+			canvas.rect(gx, gy, 40, 40);
+			canvas.fillStyle = scol;
+			canvas.fill();
+		}
 	}
+
 }
 
+socket.on('new-claim', function(msg){
+msg = JSON.parse("[" + msg + "]");
+var m2 = msg[0] + "x" + msg[1];
+map_data = map_data.filter(function(item) {
+return (item[0] !== m2)
+})
+		map_data = map_data.concat([[m2,msg[3]]]);
+draw(msg[0], msg[1], msg[3]);
 
 		    });
-var map;
+var map_data;
 socket.on('gmap', function(msg){
-map = msg;
-console.log(map);
+map_data = msg;
+redraw();
+
 });
 
+function redraw() {
+	var map = map_data;
+	canvas.beginPath();
+	canvas.rect(0, 0, window.innerWidth, window.innerHeight);
+	canvas.fillStyle = "#1e1e1e";
+	canvas.fill();
+
+	map.forEach(function(element) {
+		console.log(element);
+		piece = element[0].split("x");
+	    draw(piece[0], piece[1], element[1]);
+	});
+
+}
 function update() {
 	var t1 = new Date();
 	t1 = t1.getTime();
@@ -133,7 +157,7 @@ function update() {
 
 	socket.emit("move", x + "," + y + "," + id);
 
-
+redraw();
 
 	var t2 = new Date();
 	t2 = t2.getTime();
