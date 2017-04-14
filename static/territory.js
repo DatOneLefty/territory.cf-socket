@@ -1,4 +1,9 @@
+var open = false;
 
+function unlock() {
+	open = true;
+  document.getElementById('pop').style.display = "none";
+}
 var c = document.getElementById('game'),
 canvas = c.getContext('2d');
 c.width = window.innerWidth;
@@ -89,14 +94,52 @@ socket.on('new-info', function(msg){
 
 
 		socket.on('new-claim', function(msg){
-			
-		    });
+console.log(msg);
 
+msg = JSON.parse("[" + msg + "]");
+
+var corner_x = Math.round(x - (blocksx / 2));
+var corner_y = Math.round(parseInt(y) + (blocksy / 2));
+
+var corner_x_r = Math.round(parseInt(x) + (blocksx / 2));
+var corner_y_r = Math.round(y - (blocksy / 2));
+console.log(x);
+console.log(corner_x_r);
+if (msg[0] >= corner_x && msg[0] <= corner_x_r) {
+	if (msg[1] <= corner_y && msg[1] >= corner_y_r) {
+		var gx = corner_x + msg[0] * 40;
+		var gy = corner_y + msg[1] * 40;
+		// erm... this is broken, i just needed to commit
+		canvas.beginPath();
+		canvas.rect(gx, gy, gx + 40, gy + 40);
+		canvas.fillStyle = map[2];
+		canvas.fill();
+		console.log("written");
+	}
+}
+
+
+		    });
+var map;
+socket.on('gmap', function(msg){
+map = msg;
+console.log(map);
+});
 
 function update() {
+	var t1 = new Date();
+	t1 = t1.getTime();
+
+
 	socket.emit("move", x + "," + y + "," + id);
+
+
+
+	var t2 = new Date();
+	t2 = t2.getTime();
+	var t3 = t2 - t1;
+	  document.getElementById('overlay').innerHTML = "<b>Req Time: </b>" + t3 + " ms<br><b>Position: </b>" + x + "," + y;
 }
-var open = true;
 		function move(d) {
 			if (open == true) {
 			if (d == 1) {
