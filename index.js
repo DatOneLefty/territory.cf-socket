@@ -9,6 +9,13 @@ var port = 25500; // port for server to run on
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/static/index.html');
 });
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Headers", "Content-Type");
+    res.header("Access-Control-Allow-Methods", "PUT, GET, POST, DELETE, OPTIONS");
+    next();
+});
 
 app.use('/external/', express.static(__dirname + "/static/"));
 io.on('connection', function(socket){
@@ -32,8 +39,12 @@ io.on('connection', function(socket){
     var tdir = __dirname + "/data/" + claim[2] + "/";
     fs.writeFile(tdir + "x", claim[0]);
     fs.writeFile(tdir + "y", claim[1]);
-    io.emit('new-claim', claim[0] + "," + claim[1] + ',' + fs.readFileSync(tdir + "color", "utf8"));
-    map_data = map_data.concat([claim]);
+    io.emit('new-claim', claim[0] + "," + claim[1] + ', "' + fs.readFileSync(tdir + "color", "utf8") + '"');
+    map_data = map_data.filter(function(item) {
+  return (item[0] !== claim[0] + "x" + claim[1]) // Only keep arrays that don't begin with 5x3
+})
+    claim = [  parseInt(claim[0]) + "x" + parseInt(claim[1]) , fs.readFileSync(tdir + "color", "utf8")]
+    map_data = map_data.concat([[claim[0],claim[1]]]);
   });
 });
 
@@ -49,10 +60,20 @@ io.on('connection', function(socket){
 
   	console.log("telling user " + message + ": " +  x + "," + y + "," + c);
   	this.emit("info", x + "," + y + "," + c);
+    this.emit("gmap", map_data);
 
 	});
 });
 
+function remove(arr, what) {
+    var found = arr.indexOf(what);
+
+    while (found !== -1) {
+        arr.splice(found, 1);
+        found = arr.indexOf(what);
+
+    }
+}
 
 function file_get_cont(name) {
   var chunk, data;

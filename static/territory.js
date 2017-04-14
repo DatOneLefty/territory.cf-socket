@@ -16,7 +16,7 @@ canvas.fill();
 	width = window.innerWidth;
 	height = window.innerHeight;
 	document.getElementById("game").innerHTML = "";
-	blocksx = Math.round(width / 40 - 1);
+	blocksx = Math.round(width / 40);
 	blocksy = Math.round(height / 40);
 
 	var tw = 0;
@@ -114,6 +114,7 @@ function draw(x2, y2, scol) {
 		}
 	}
 
+
 }
 
 socket.on('new-claim', function(msg){
@@ -145,7 +146,7 @@ function redraw() {
 		piece = element[0].split("x");
 	    draw(piece[0], piece[1], element[1]);
 	});
-
+draw(x, y, "#757575");
 }
 function update() {
 	var t1 = new Date();
