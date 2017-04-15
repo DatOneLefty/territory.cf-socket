@@ -117,3 +117,12 @@ console.log("SERVER: map backed up");
 http.listen(port, function(){
   console.log('server initialized. listening on port ' + port);
 });
+
+
+
+io.on('connection', function(socket){
+  socket.on('req-map', function(message) {
+    this.emit("gmap", map_data);
+
+	});
+});

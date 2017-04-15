@@ -1,5 +1,6 @@
 var open = false;
-
+var redo = 10;
+var cdraw = 0;
 function unlock() {
 	open = true;
   document.getElementById('pop').style.display = "none";
@@ -81,6 +82,8 @@ var x, y, color;
 	document.getElementById("game-button").disabled = false;
 	x = inf[0];
 	y = inf[1];
+	y = parseInt(y);
+	x = parseInt(x);
 	color = inf[2];
     });
 
@@ -124,18 +127,25 @@ map_data = map_data.filter(function(item) {
 return (item[0] !== m2)
 })
 map_data = map_data.concat([[m2,msg[3]]]);
+
 draw(msg[0], msg[1], msg[3]);
 });
 
 
-var map_data;
+var map_data, backup;
 socket.on('gmap', function(msg){
 map_data = msg;
+backup = msg;
 redraw();
 
 });
 
 function redraw() {
+	cdraw++;
+	if (cdraw > redo) {
+		socket.emit("req-map", "");
+		cdraw = 0;
+	}
 	var map = map_data;
 	canvas.beginPath();
 	canvas.rect(0, 0, window.innerWidth, window.innerHeight);
@@ -154,8 +164,7 @@ function update() {
 
 
 	socket.emit("move", x + "," + y + "," + id);
-
-redraw();
+  redraw();
 
 	var t2 = new Date();
 	t2 = t2.getTime();
