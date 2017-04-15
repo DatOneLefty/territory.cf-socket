@@ -169,7 +169,7 @@ function update() {
 	var t2 = new Date();
 	t2 = t2.getTime();
 	var t3 = t2 - t1;
-	  document.getElementById('overlay').innerHTML = "<b>Req Time: </b>" + t3 + " ms<br><b>Position: </b>" + x + "," + y;
+	  document.getElementById('overlay').innerHTML = "<center><button onclick='move(1)'>&uarr;</button><br><button onclick='move(3)'>&larr;</button><button> </button><button onclick='move(4)'>&rarr;</button><br><button onclick='move(2)'>&darr;</button></center><b>Position: </b>" + x + "," + y;
 }
 		function move(d) {
 			if (open == true) {

@@ -37,6 +37,9 @@ io.on('connection', function(socket){
     var claim = msg.split(",");
     console.log("CLAIM:" + claim[0] + "," + claim[1] + " by " + claim[2]);
     var tdir = __dirname + "/data/" + claim[2] + "/";
+
+    var tx = fs.readFileSync(tdir + "x", "utf8");
+    var ty = fs.readFileSync(tdir + "y", "utf8");
     fs.writeFile(tdir + "x", claim[0]);
     fs.writeFile(tdir + "y", claim[1]);
     io.emit('new-claim', claim[0] + "," + claim[1] + ', "' + fs.readFileSync(tdir + "color", "utf8") + '"');
