@@ -37,9 +37,10 @@ io.on('connection', function(socket){
     var claim = msg.split(",");
     console.log("CLAIM:" + claim[0] + "," + claim[1] + " by " + claim[2]);
     var tdir = __dirname + "/data/" + claim[2] + "/";
-
+    try {
     var tx = fs.readFileSync(tdir + "x", "utf8");
     var ty = fs.readFileSync(tdir + "y", "utf8");
+  } catch (err) {}
     fs.writeFile(tdir + "x", claim[0]);
     fs.writeFile(tdir + "y", claim[1]);
     io.emit('new-claim', claim[0] + "," + claim[1] + ', "' + fs.readFileSync(tdir + "color", "utf8") + '"');
@@ -57,10 +58,11 @@ io.on('connection', function(socket){
 
 	var tdir = __dirname + "/data/" + message + "/";
 	var x,y,c;
+  try {
   x= fs.readFileSync(tdir + "x", "utf8");
   y= fs.readFileSync(tdir + "y", "utf8");
   c= fs.readFileSync(tdir + "color", "utf8");
-
+  } catch (err) {}
   	console.log("telling user " + message + ": " +  x + "," + y + "," + c);
   	this.emit("info", x + "," + y + "," + c);
     this.emit("gmap", map_data);
